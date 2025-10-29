@@ -9,9 +9,24 @@ if (!MONGODB_URI) {
 }
 
 async function connectToDatabase() {
-  const client = await MongoClient.connect(MONGODB_URI)
-  const db = client.db(MONGODB_DB)
-  return { client, db }
+  try {
+    console.log('Connecting to MongoDB...');
+    const client = await MongoClient.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Successfully connected to MongoDB.');
+    
+    const db = client.db(MONGODB_DB);
+    // Test the connection by listing collections
+    const collections = await db.listCollections().toArray();
+    console.log('Available collections:', collections.map(c => c.name));
+    
+    return { client, db };
+  } catch (error) {
+    console.error('MongoDB Connection Error:', error);
+    throw error;
+  }
 }
 
 export default async function handler(req, res) {
