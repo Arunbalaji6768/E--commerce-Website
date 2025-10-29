@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "Laptop Pro 15",
+    "slug": "laptop-pro-15",
+    "description": "High-performance laptop with 16GB RAM, 512GB SSD, Intel i7.",
+    "price": 1299.99,
+    "category": "Electronics",
+    "inventory": 45,
+    "lastUpdated": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Wireless Headphones",
+    "slug": "wireless-headphones",
+    "description": "Noise-canceling wireless headphones with 30-hour battery.",
+    "price": 199.99,
+    "category": "Electronics",
+    "inventory": 120,
+    "lastUpdated": "2024-01-14T15:45:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Radio DJ Mixer",
+    "slug": "radio-dj-mixer",
+    "description": "Professional DJ mixer for radio stations and live broadcasting.",
+    "price": 899.99,
+    "category": "Audio Equipment",
+    "inventory": 8,
+    "lastUpdated": "2024-01-16T09:20:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Streaming Microphone",
+    "slug": "streaming-microphone",
+    "description": "USB condenser microphone ideal for podcasting and streaming.",
+    "price": 149.99,
+    "category": "Audio Equipment",
+    "inventory": 3,
+    "lastUpdated": "2024-01-15T14:10:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Studio Monitor Speakers",
+    "slug": "studio-monitor-speakers",
+    "description": "Professional 5-inch studio monitor speakers for production.",
+    "price": 349.99,
+    "category": "Audio Equipment",
+    "inventory": 22,
+    "lastUpdated": "2024-01-13T11:00:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Portable Tablet 10",
+    "slug": "portable-tablet-10",
+    "description": "10-inch Android tablet with 8GB RAM and 256GB storage.",
+    "price": 299.99,
+    "category": "Electronics",
+    "inventory": 67,
+    "lastUpdated": "2024-01-14T16:30:00Z"
+  },
+  {
+    "id": "1761763218329",
+    "name": "shoes",
+    "slug": "www.store.com/products/red-running-shoes",
+    "description": "best red shoes",
+    "price": 2000,
+    "category": "nike",
+    "inventory": 5,
+    "lastUpdated": "2025-10-29T18:40:18.329Z"
+  }
+]
