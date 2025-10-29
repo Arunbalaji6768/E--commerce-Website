@@ -1,32 +1,56 @@
-import fs from 'fs'
-import path from 'path'
+import { MongoClient } from 'mongodb'
 
-const filePath = path.join(process.cwd(), 'data', 'products.json')
-const API_KEY = 'admin-secret-key-123'
+const API_KEY = process.env.API_KEY || 'admin-secret-key-123'
+const MONGODB_URI = process.env.MONGODB_URI
+const MONGODB_DB = process.env.MONGODB_DB || 'nextjs-ecommerce'
 
-function readProducts() {
-  try { return JSON.parse(fs.readFileSync(filePath,'utf8')) } catch { return [] }
+if (!MONGODB_URI) {
+  throw new Error('Please define MONGODB_URI environment variable')
 }
-function writeProducts(products){ fs.writeFileSync(filePath, JSON.stringify(products, null, 2)) }
 
-export default function handler(req,res){
+async function connectToDatabase() {
+  const client = await MongoClient.connect(MONGODB_URI)
+  const db = client.db(MONGODB_DB)
+  return { client, db }
+}
+
+export default async function handler(req, res) {
   const { method } = req
-  if (method==='GET'){
-    try { res.status(200).json(readProducts()) } catch { res.status(500).json({error:'Failed to fetch products'}) }
-    return
-  }
-  if (method==='POST'){
-    if (req.headers['x-api-key'] !== API_KEY) return res.status(401).json({error:'Unauthorized. Invalid API key.'})
-    try {
-      const products = readProducts()
-      const newProduct = { id: Date.now().toString(), ...req.body, lastUpdated: new Date().toISOString() }
-      products.push(newProduct)
-      writeProducts(products)
+
+  const { client, db } = await connectToDatabase()
+  const collection = db.collection('products')
+
+  try {
+    if (method === 'GET') {
+      const products = await collection.find({}).toArray()
+      res.status(200).json(products)
+      return
+    }
+
+    if (method === 'POST') {
+      if (req.headers['x-api-key'] !== API_KEY) {
+        return res.status(401).json({ error: 'Unauthorized. Invalid API key.' })
+      }
+
+      const newProduct = {
+        id: Date.now().toString(),
+        ...req.body,
+        lastUpdated: new Date().toISOString()
+      }
+
+      await collection.insertOne(newProduct)
       res.status(201).json(newProduct)
-    } catch { res.status(500).json({error:'Failed to create product'}) }
-    return
+      return
+    }
+
+    res.setHeader('Allow', ['GET', 'POST'])
+    res.status(405).end(`Method ${method} Not Allowed`)
+  } catch (error) {
+    console.error('Database error:', error)
+    res.status(500).json({ error: 'Database operation failed' })
+  } finally {
+    await client.close()
   }
-  res.setHeader('Allow',['GET','POST']); res.status(405).end(`Method ${method} Not Allowed`)
 }
 
 
