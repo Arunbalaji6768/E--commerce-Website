@@ -9,10 +9,34 @@ export default function Admin() {
   const submit = async (e) => {
     e.preventDefault()
     setMessage('')
-    const res = await fetch('/api/products', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-api-key':'admin-secret-key-123' }, body: JSON.stringify({ ...form, price: parseFloat(form.price), inventory: parseInt(form.inventory) }) })
-    const data = await res.json()
-    setMessage(res.ok? '✅ Product added' : `❌ ${data.error||'Failed'}`)
-    if (res.ok) setForm({ name:'', slug:'', description:'', price:'', category:'', inventory:'' })
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || 'admin-secret-key-123'
+        },
+        body: JSON.stringify({
+          ...form,
+          price: parseFloat(form.price),
+          inventory: parseInt(form.inventory)
+        })
+      })
+      
+      const data = await res.json()
+      
+      if (!res.ok) {
+        console.error('API Error:', data)
+        setMessage(`❌ Error: ${data.error || data.details || 'Failed to add product'}`)
+        return
+      }
+      
+      setMessage('✅ Product added successfully')
+      setForm({ name:'', slug:'', description:'', price:'', category:'', inventory:'' })
+    } catch (error) {
+      console.error('Submit error:', error)
+      setMessage(`❌ Error: ${error.message}`)
+    }
   }
 
   return (

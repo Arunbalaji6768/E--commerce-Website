@@ -16,40 +16,70 @@ async function connectToDatabase() {
 
 export default async function handler(req, res) {
   const { method } = req
-
-  const { client, db } = await connectToDatabase()
-  const collection = db.collection('products')
+  let client;
 
   try {
+    // Log the incoming request
+    console.log('Request method:', method);
+    console.log('Request headers:', req.headers);
+    if (method === 'POST') {
+      console.log('Request body:', req.body);
+    }
+
+    // Connect to database
+    const connection = await connectToDatabase();
+    client = connection.client;
+    const db = connection.db;
+    const collection = db.collection('products');
+
     if (method === 'GET') {
-      const products = await collection.find({}).toArray()
-      res.status(200).json(products)
-      return
+      const products = await collection.find({}).toArray();
+      console.log('GET: Found products:', products.length);
+      res.status(200).json(products);
+      return;
     }
 
     if (method === 'POST') {
+      // Verify API key
+      console.log('Received API key:', req.headers['x-api-key']);
+      console.log('Expected API key:', API_KEY);
+      
       if (req.headers['x-api-key'] !== API_KEY) {
-        return res.status(401).json({ error: 'Unauthorized. Invalid API key.' })
+        console.log('API key mismatch');
+        return res.status(401).json({ error: 'Unauthorized. Invalid API key.' });
       }
 
       const newProduct = {
         id: Date.now().toString(),
         ...req.body,
         lastUpdated: new Date().toISOString()
-      }
+      };
 
-      await collection.insertOne(newProduct)
-      res.status(201).json(newProduct)
-      return
+      console.log('Attempting to insert product:', newProduct);
+      
+      const result = await collection.insertOne(newProduct);
+      console.log('Insert result:', result);
+      
+      res.status(201).json(newProduct);
+      return;
     }
 
-    res.setHeader('Allow', ['GET', 'POST'])
-    res.status(405).end(`Method ${method} Not Allowed`)
+    res.setHeader('Allow', ['GET', 'POST']);
+    res.status(405).end(`Method ${method} Not Allowed`);
   } catch (error) {
-    console.error('Database error:', error)
-    res.status(500).json({ error: 'Database operation failed' })
+    console.error('Detailed error:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    res.status(500).json({ 
+      error: 'Database operation failed',
+      details: error.message 
+    });
   } finally {
-    await client.close()
+    if (client) {
+      await client.close();
+    }
   }
 }
 
