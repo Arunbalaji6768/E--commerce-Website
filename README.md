@@ -8,10 +8,16 @@ This project showcases mastery of Next.js rendering strategies by implementing f
 
 | Page | Rendering Type | Description |
 |------|---------------|-------------|
-| `/` (Home) | SSG (Static Site Generation) | Pre-built at build time for optimal performance |
+| `/` (Home) | SSR (Server-Side Rendering) | Fetches fresh data on every request so new products appear immediately |
 | `/products/[slug]` | ISR (Incremental Static Regeneration) | Rebuilds automatically every 60 seconds |
 | `/dashboard` | SSR (Server-Side Rendering) | Fetches fresh data on every request |
 | `/admin` | CSR (Client-Side Rendering) | Interactive client-side data fetching |
+
+## 🌐 Live Deployments
+
+- https://e-commerce-website-two-pi.vercel.app/
+- https://e-commerce-website-czjjqse4k-arunbalajis-projects.vercel.app/
+- https://e-commerce-website-git-main-arunbalajis-projects.vercel.app/
 
 ## 🚀 Getting Started
 
@@ -60,7 +66,7 @@ TalantonCore/
 │   │       ├── index.js       # GET all, POST product
 │   │       └── [slug].js      # GET single, PUT, DELETE
 │   ├── _app.js               # App wrapper
-│   ├── index.js              # Home page (SSG)
+│   ├── index.js              # Home page (SSR)
 │   ├── products/
 │   │   └── [slug].js         # Product detail (ISR)
 │   ├── dashboard.js          # Dashboard (SSR)
@@ -75,11 +81,11 @@ TalantonCore/
 ## 🎯 Features
 
 ### Home Page (/)
-- **Rendering:** Static Site Generation (SSG)
+- **Rendering:** Server-Side Rendering (SSR)
 - Product listing with search functionality
 - Client-side filtering by name, description, or category
 - Links to individual product pages
-- Fast loading (pre-rendered at build time)
+- Always fresh data (queries MongoDB on every request)
 
 ### Product Detail (/products/[slug])
 - **Rendering:** Incremental Static Regeneration (ISR)

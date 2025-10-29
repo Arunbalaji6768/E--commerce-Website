@@ -7,11 +7,25 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import LoginModal from '../components/LoginModal'
 
-export async function getStaticProps() {
-  const filePath = path.join(process.cwd(), 'data', 'products.json')
-  const fileContents = fs.readFileSync(filePath, 'utf8')
-  const products = JSON.parse(fileContents)
-  return { props: { products } }
+export async function getServerSideProps() {
+  try {
+    const { connectToDatabase } = require('../lib/mongodb');
+    const { client, db } = await connectToDatabase();
+    const products = await db.collection('products').find({}).toArray();
+    await client.close();
+    return {
+      props: {
+        products: JSON.parse(JSON.stringify(products)),
+      }
+    }
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    // Fallback to JSON file if MongoDB fails
+    const filePath = path.join(process.cwd(), 'data', 'products.json')
+    const fileContents = fs.readFileSync(filePath, 'utf8')
+    const products = JSON.parse(fileContents)
+    return { props: { products } }
+  }
 }
 
 export default function Home({ products }) {

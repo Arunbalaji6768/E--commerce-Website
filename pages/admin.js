@@ -10,11 +10,12 @@ export default function Admin() {
     e.preventDefault()
     setMessage('')
     try {
+      console.log('Submitting product...');
       const res = await fetch('/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || 'admin-secret-key-123'
+          'x-api-key': 'admin-secret-key-123'
         },
         body: JSON.stringify({
           ...form,
@@ -24,6 +25,7 @@ export default function Admin() {
       })
       
       const data = await res.json()
+      console.log('API Response:', data);
       
       if (!res.ok) {
         console.error('API Error:', data)
